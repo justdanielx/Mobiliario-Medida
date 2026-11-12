@@ -1,7 +1,7 @@
 # Produção de Mobiliário à Medida
 
 Trabalho Prático de Base de Dados (ISEC)                
-Sistema de base de dados Oracle SQL + SAP PowerDesigner + Visual Studio Code: gestão da produção de uma empresa de mobiliário à medida
+Sistema de base de dados Oracle SQL + SAP PowerDesigner: gestão da produção de uma empresa de mobiliário à medida
 
 **Ferramentas:**     
 - draw.io: rascunho editável do Modelo Conceptual
