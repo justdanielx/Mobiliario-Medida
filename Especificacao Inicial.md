@@ -58,10 +58,12 @@ A melhoria passa pela implementação de uma base de dados que estruture o cruza
 A solução assenta numa base de dados relacional com 18 entidades e 22 relacionamentos, organizados em cinco grupos:
 
 - **Pessoas:** CLIENTE, EMPREGADO, FORNECEDOR.
-- **Produto:** PRODUTO. Todos os móveis são feitos por medida, descritos pelas suas medidas (altura, largura, profundidade) e pelo preço.
+- **Produto:** PRODUTO. Todos os móveis são feitos por medida, descritos pelas suas medidas (altura, largura, profundidade), pelo acabamento e pelo preço.
 - **Materiais:** COMPONENTE, ARMAZEM.
 - **Ciclo comercial:** ORCAMENTO, ENCOMENDA, FATURA, ENTREGA, ENCOMENDA_FORNECEDOR, PAGAMENTO_CLIENTE, PAGAMENTO_FORNECEDOR, PAGAMENTO_EMPREGADO.
 - **Produção:** FASE_PRODUCAO, TIPO_FASE, TRABALHO, MAQUINA.
+
+O SAP PowerDesigner não representa atributos multivalor, por isso, no modelo desenhado nessa ferramenta, os telefones dos clientes e dos fornecedores e as especialidades dos empregados passam a entidades próprias (TELEFONE_CLIENTE, TELEFONE_FORNECEDOR e ESPECIALIDADE_EMPREGADO). Nesse modelo há, assim, 21 entidades e 25 relacionamentos.
 
 A ENCOMENDA é o centro do modelo: é a lista de todos os produtos que o cliente pretende e liga-se ao cliente, ao empregado que a vendeu, ao orçamento, à fatura, ao pagamento e à entrega. Cada problema identificado tem resposta no modelo:
 
@@ -69,7 +71,7 @@ A ENCOMENDA é o centro do modelo: é a lista de todos os produtos que o cliente
 |---|---|
 | 1. Rastreabilidade | O lote, a quantidade e o preço de cada compra ficam registados nos relacionamentos de abastecimento, ligando fornecedor, componente e, nas compras dirigidas, a encomenda. Permite listar as encomendas afetadas por um lote defeituoso. |
 | 2. Estado da produção | Cada produto tem as suas fases de produção, com datas e estado, e a encomenda tem o seu próprio estado (Em orçamento, Aprovada, Em produção, Pronta, Entregue). |
-| 3. Stock disperso | O stock é guardado por componente e por armazém, e cada fase regista o material que consome. |
+| 3. Stock disperso | O stock é guardado por componente e por armazém, e cada fase regista o material que consome, com a respetiva quantidade. |
 | 4. Compras desligadas | Dois ternários separam a compra dirigida a uma encomenda da compra preventiva para stock, e cada compra tem data de entrega e estado. |
 | 5. Orçamentos sem custos | Cada produto tem uma árvore de componentes com quantidades e cada compra regista o preço unitário, o que permite calcular o custo e compará-lo com o preço. |
 | 6. Mão de obra | Cada trabalho regista o empregado, a fase, o dia e as horas de início e de fim, e cada empregado pode ter um chefe de equipa. |
@@ -101,7 +103,7 @@ A nível estrutural, o modelo suporta:
 ## 5 Regras de Negócio
 
 1. **Validação de Stock:** o stock de um componente num armazém não pode assumir valores negativos após a alocação ou o consumo numa fase de produção.
-2. **Custo do Produto:** o preço de um produto tem de ser obrigatoriamente superior à soma do custo de compra de todos os componentes da sua árvore, tendo em conta as quantidades. O custo de compra de um componente é o preço unitário da sua compra mais recente.
+2. **Custo do Produto:** o preço de um produto tem de ser obrigatoriamente superior à soma do custo de compra de todos os componentes da sua árvore, tendo em conta as quantidades. O custo de compra de um componente é o preço unitário da sua compra mais recente; se o componente ainda não foi comprado, usa-se o seu custo de referência.
 3. **Cronologia de Produção:** a data de início de uma fase de montagem ou tratamento não pode ser anterior à data de entrega, pelo fornecedor, do material associado.
 4. **Estado da Encomenda:** uma encomenda apenas pode transitar para o estado "Pronta" se a totalidade dos produtos nela incluídos tiverem todas as suas fases de produção com o estado "Concluída".
 5. **Exclusividade de Alocação de Tempo:** um empregado não pode ter registos de trabalho sobrepostos, no mesmo dia e no mesmo bloco de horas, em fases de produtos diferentes.
